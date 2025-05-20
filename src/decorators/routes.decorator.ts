@@ -1,14 +1,42 @@
-import { Router } from 'express';
-import { RouteOptions } from '../shared/interfaces/route-options.interface';
-import { DecoratorRegisterFunction } from '../shared/interfaces/decorator-register-function.type';
+import "reflect-metadata";
+import { Router } from "express";
 export const appRouter = Router();
 
-
-function routesDecorator(options: RouteOptions): DecoratorRegisterFunction {
-    return (target: any, methodName: string, descriptor: PropertyDescriptor): void => {
-        const prefix = target.constructor.name.toLowerCase();
-        const path = `/${prefix}${options.path}`;
-       appRouter[options.requestMethod](path, descriptor.value);
-    };
+// Типы для удобства
+type HttpMethod = "get" | "post" | "put" | "delete" | "patch";
+interface RouteOptions {
+  path: string;
+  method: HttpMethod;
 }
-export default routesDecorator;
+
+// Ключ для хранения метаданных класса
+const CONTROLLER_PREFIX_METADATA_KEY = "controller:prefix";
+
+// Декоратор класса — задаёт базовый путь для всех методов
+export function controller(prefix: string = "") {
+  return (target: any) => {
+    Reflect.defineMetadata(CONTROLLER_PREFIX_METADATA_KEY, prefix, target);
+  };
+}
+
+// Декоратор метода — регистрирует маршрут
+export function route(options: RouteOptions): MethodDecorator {
+  return (
+    target: any,
+    methodName: string | symbol,
+    descriptor: PropertyDescriptor
+  ) => {
+    const controllerPrefix =
+      Reflect.getMetadata(CONTROLLER_PREFIX_METADATA_KEY, target.constructor) ||
+      "";
+    const fullPath = `${controllerPrefix}${options.path}`.replace("//", "/"); // Убираем дублирующиеся слеши
+
+    appRouter[options.method](fullPath, descriptor.value);
+  };
+}
+
+// Удобные декораторы для методов
+export const Get = (path: string = "") => route({ path, method: "get" });
+export const Post = (path: string = "") => route({ path, method: "post" });
+export const Put = (path: string = "") => route({ path, method: "put" });
+export const Delete = (path: string = "") => route({ path, method: "delete" });

@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
-import routes from "../decorators/routes.decorator";
-import controller from "../decorators/controller.decorator";
-import Post from "../decorators/get.decorator";
+import { Post, Get, controller } from "../decorators/routes.decorator";
 
-@controller("main")
+@controller("/")
 export class Main {
   private static answer = {
     response: {
@@ -14,8 +12,13 @@ export class Main {
     version: "1.0",
   };
 
-  @Post("/")
+  @Post("/main")
   getUsers(req: Request, res: Response): void {
+    res.json(Main.answer);
+  }
+
+  @Get("/main")
+  getIndex(req: Request, res: Response): void {
     res.json(Main.answer);
   }
 }
