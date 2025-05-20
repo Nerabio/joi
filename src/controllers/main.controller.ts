@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import routes from "../decorators/routes.decorator";
 import controller from "../decorators/controller.decorator";
-import Get from "../decorators/get.decorator";
+import Post from "../decorators/get.decorator";
 
 @controller("main")
 export class Main {
@@ -14,7 +14,7 @@ export class Main {
     version: "1.0",
   };
 
-  @Get("/")
+  @Post("/")
   getUsers(req: Request, res: Response): void {
     res.json(Main.answer);
   }
