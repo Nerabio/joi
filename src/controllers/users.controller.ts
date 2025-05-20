@@ -9,7 +9,7 @@ export class Users {
     { id: 3, name: "Vera", age: 33, status: "inactive" },
   ];
 
-  @Get("/")
+  @Get("/yandex_df94c15d16270500.html")
   getUsers(req: Request, res: Response): void {
     res.send(`<html>
     <head>
