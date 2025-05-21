@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import { Post, Get, controller } from "../decorators/routes.decorator";
+import { injectable } from "inversify";
+import { AiService } from "../services/ai.service";
 
 @controller("/")
+@injectable()
 export class Main {
   private static answer = {
     response: {
@@ -12,8 +15,11 @@ export class Main {
     version: "1.0",
   };
 
+  constructor(private readonly aiService: AiService) {}
+
   @Post("/main")
   getUsers(req: Request, res: Response): void {
+    console.log(req);
     res.json(Main.answer);
   }
 

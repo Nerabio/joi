@@ -1,9 +1,16 @@
-import * as express from "express";
+import "reflect-metadata";
+import { container } from "./container";
 import { appRouter } from "./decorators";
-import "./controllers";
+import * as express from "express";
+
+import { ConfigService } from "./services/config.service";
+require("dotenv").config();
+
+const config = container.get(ConfigService);
+const port = 8080;
 
 const app = express();
 app.use(appRouter);
-app.listen(8080, () => {
-  console.log("Server is running on port 3000");
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
