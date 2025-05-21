@@ -26,6 +26,8 @@ export class Main {
     } else {
       response = "Я слушаю";
     }
+    console.log("input ->> ", original_utterance);
+    console.log("output ->> ", response);
     res.json({
       response: {
         text: response,
