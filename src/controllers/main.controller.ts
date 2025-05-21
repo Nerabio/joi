@@ -19,7 +19,9 @@ export class Main {
 
   @Post("/main")
   getUsers(req: Request, res: Response): void {
-    console.log(req);
+    const { original_utterance } = req.body.request;
+
+    console.log(original_utterance);
     res.json(Main.answer);
   }
 
