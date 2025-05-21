@@ -24,9 +24,8 @@ export class Main {
 
   @Post("/main")
   async getUsers(req: Request, res: Response): Promise<void> {
-    const { original_utterance, session } = req.body.request;
+    const { original_utterance } = req.body.request;
 
-    //session.message_id
     if (original_utterance === CONTINUATION_PHRASE) {
       const lastMessage = this.storageService.get();
       if (lastMessage?.status === "complete") {
@@ -44,10 +43,7 @@ export class Main {
 
     const response =
       original_utterance.length > 0
-        ? await Promise.race([
-            this.timeout(),
-            this.request(original_utterance, session),
-          ])
+        ? await Promise.race([this.timeout(), this.request(original_utterance)])
         : DEFAULT_MESSAGE;
 
     res.json({
@@ -73,9 +69,9 @@ export class Main {
     });
   }
 
-  request(message: string, session: any): Promise<string> {
+  request(message: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
-      this.storageService.create(session["message_id"]);
+      this.storageService.create();
       const responseAi = await this.aiService.request(message);
       resolve(this.storageService.saveText(responseAi).answer);
     });

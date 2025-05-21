@@ -5,9 +5,8 @@ import { MessageItem } from "../interfaces/message-item.interface";
 export class StorageService {
   private store: MessageItem;
 
-  create(messageId: number): MessageItem | null {
+  create(): MessageItem | null {
     this.store = {
-      messageId,
       time: Date.now(),
       status: "pending",
     };
