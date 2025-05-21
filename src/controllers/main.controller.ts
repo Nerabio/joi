@@ -30,7 +30,7 @@ export class Main {
   async getUsers(req: Request, res: Response): Promise<void> {
     const { original_utterance } = req.body.request;
 
-    if (original_utterance === CONTINUATION_PHRASE) {
+    if (this.prepareString(original_utterance) === CONTINUATION_PHRASE) {
       const lastMessage = Object.assign(this.storageService.get());
       if (lastMessage?.status === "complete") {
         this.storageService.clear();
@@ -80,5 +80,9 @@ export class Main {
       const responseAi = await this.aiService.request(message);
       resolve(this.storageService.saveText(responseAi).answer);
     });
+  }
+
+  prepareString(message: string): string {
+    return message.trim().toLowerCase();
   }
 }
