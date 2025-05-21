@@ -18,9 +18,18 @@ export class Main {
   constructor(private readonly aiService: AiService) {}
 
   @Post("/main")
-  getUsers(req: Request, res: Response): void {
-    console.log(req.body);
-    res.json(Main.answer);
+  async getUsers(req: Request, res: Response): Promise<void> {
+    const { original_utterance } = req.body.request;
+    const response = await this.aiService.request(original_utterance);
+
+    res.json({
+      response: {
+        text: response,
+        tts: response,
+        end_session: false,
+      },
+      version: "1.0",
+    });
   }
 
   @Get("/main")
