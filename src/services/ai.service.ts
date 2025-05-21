@@ -13,7 +13,7 @@ export class AiService {
     });
     const completion = await openai.chat.completions.create({
       model: this.configService.getKey("model"),
-
+      max_completion_tokens: 300,
       messages: [
         // {
         //   role: "system",
