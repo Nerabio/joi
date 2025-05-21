@@ -4,14 +4,16 @@ import OpenAI from "openai";
 
 @injectable()
 export class AiService {
-  constructor(private readonly configService: ConfigService) {}
-
-  async request(ask: string): Promise<string> {
-    const openai = new OpenAI({
+  private openai: OpenAI;
+  constructor(private readonly configService: ConfigService) {
+    this.openai = new OpenAI({
       baseURL: this.configService.getKey("baseUrl"),
       apiKey: this.configService.getKey("apiKey"),
     });
-    const completion = await openai.chat.completions.create({
+  }
+
+  async request(ask: string): Promise<string> {
+    const completion = await this.openai.chat.completions.create({
       model: this.configService.getKey("model"),
       max_completion_tokens: 300,
       messages: [
