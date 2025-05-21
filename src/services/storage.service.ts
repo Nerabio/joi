@@ -12,6 +12,9 @@ export class StorageService {
     };
     return this.store;
   }
+  clear(): void {
+    this.store = null;
+  }
 
   saveText(message: string): MessageItem | null {
     this.store.answer = message;

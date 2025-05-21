@@ -2,7 +2,11 @@ import { Request, Response } from "express";
 import { Post, Get, controller } from "../decorators/routes.decorator";
 import { injectable } from "inversify";
 import { AiService } from "../services/ai.service";
-import { CONTINUATION_PHRASE, DEFAULT_MESSAGE } from "../constants";
+import {
+  CONTINUATION_PHRASE,
+  DEFAULT_MESSAGE,
+  WELCOME_MESSAGE,
+} from "../constants";
 import { StorageService } from "../services/storage.service";
 
 @controller("/")
@@ -27,8 +31,9 @@ export class Main {
     const { original_utterance } = req.body.request;
 
     if (original_utterance === CONTINUATION_PHRASE) {
-      const lastMessage = this.storageService.get();
+      const lastMessage = Object.assign(this.storageService.get());
       if (lastMessage?.status === "complete") {
+        this.storageService.clear();
         res.json({
           response: {
             text: lastMessage.answer,
@@ -44,7 +49,7 @@ export class Main {
     const response =
       original_utterance.length > 0
         ? await Promise.race([this.timeout(), this.request(original_utterance)])
-        : DEFAULT_MESSAGE;
+        : WELCOME_MESSAGE;
 
     res.json({
       response: {
