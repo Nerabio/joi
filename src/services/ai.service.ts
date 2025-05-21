@@ -15,10 +15,10 @@ export class AiService {
       model: this.configService.getKey("model"),
 
       messages: [
-        {
-          role: "system",
-          content: "Отвечай только plain-текстом, без тегов и комментариев.",
-        },
+        // {
+        //   role: "system",
+        //   content: "Отвечай только plain-текстом, без тегов и комментариев.",
+        // },
         {
           role: "user",
           content: ask,

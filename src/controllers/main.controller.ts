@@ -20,8 +20,12 @@ export class Main {
   @Post("/main")
   async getUsers(req: Request, res: Response): Promise<void> {
     const { original_utterance } = req.body.request;
-    const response = await this.aiService.request(original_utterance);
-
+    let response;
+    if (original_utterance.length > 0) {
+      response = await this.aiService.request(original_utterance);
+    } else {
+      response = "Я слушаю";
+    }
     res.json({
       response: {
         text: response,
