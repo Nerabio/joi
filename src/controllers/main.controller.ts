@@ -8,6 +8,7 @@ import {
   WELCOME_MESSAGE,
 } from "../constants";
 import { StorageService } from "../services/storage.service";
+import { HistoryService } from "../services/history.service";
 
 @controller("/")
 @injectable()
@@ -23,7 +24,8 @@ export class Main {
 
   constructor(
     private readonly aiService: AiService,
-    private readonly storageService: StorageService
+    private readonly storageService: StorageService,
+    private readonly history: HistoryService
   ) {}
 
   @Post("/main")
@@ -34,6 +36,7 @@ export class Main {
       const lastMessage = Object.assign(this.storageService.get());
       if (lastMessage?.status === "complete") {
         this.storageService.clear();
+        this.history.add("assistant", lastMessage.answer);
         res.json({
           response: {
             text: lastMessage.answer,
@@ -78,6 +81,7 @@ export class Main {
   }
 
   request(message: string): Promise<string> {
+    this.history.add("user", message);
     return new Promise(async (resolve, reject) => {
       this.storageService.create();
       const responseAi = await this.aiService.request(message);
