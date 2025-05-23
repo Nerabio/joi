@@ -17,8 +17,7 @@ export class StorageService {
   }
 
   saveText(message: string): MessageItem | null {
-    this.store.answer = message;
-    this.store.status = "complete";
+    this.store = { ...this.store, answer: message, status: "complete" };
     return this.store;
   }
 
