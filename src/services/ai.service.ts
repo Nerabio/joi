@@ -32,6 +32,7 @@ export class AiService {
   }
 
   async request(ask: string): Promise<string> {
+    this.history.add("user", ask);
     const completion = await this.openai.chat.completions.create({
       model: this.settingsAi.model,
       max_completion_tokens: this.settingsAi.maxCompletionTokens ?? 300,
