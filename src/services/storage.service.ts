@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { MessageItem } from "../interfaces/message-item.interface";
+import { MessageItem } from "../interfaces";
 
 @injectable()
 export class StorageService {
@@ -12,6 +12,7 @@ export class StorageService {
     };
     return this.store;
   }
+
   clear(): void {
     this.store = null;
   }

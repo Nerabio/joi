@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { MessageHistory, Role } from "../interfaces/message-history.interface";
+import { MessageHistory, Role } from "../interfaces";
 
 @injectable()
 export class HistoryService {

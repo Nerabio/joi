@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { ConfigApp } from "../interfaces/config-app.interface";
+import { ConfigApp } from "../interfaces";
 import { snakeToCamel } from "../utils/snake-to-camel";
 
 @injectable()
