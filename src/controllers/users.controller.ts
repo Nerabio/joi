@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { Get, controller } from "../core/decorators/routes.decorator";
 import { injectable } from "inversify";
-import { ConfigService } from "../core/services/config.service";
-import { AiService } from "../core/services/ai.service";
+import {AiService} from "../core/services";
+import {controller, Get} from "../core/decorators";
+
 
 @controller("/")
 @injectable()

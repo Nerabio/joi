@@ -1,20 +1,15 @@
 import "reflect-metadata";
 import { Container } from "inversify";
-import { Main, Users } from "../../controllers";
-import { AiService, ConfigService, FacadeService, HistoryService, StorageService } from "../services";
+import {ServicesModule} from "./modules/services.module";
+import {ControllersModule} from "./modules/controllers.module";
 
 
-const container = new Container();
 
-container.bind(ConfigService).toSelf().inSingletonScope();
-container.bind(FacadeService).toSelf().inSingletonScope();
-container.bind(AiService).toSelf().inSingletonScope();
-container.bind(StorageService).toSelf().inSingletonScope();
-container.bind(HistoryService).toSelf().inSingletonScope();
+    const container = new Container();
 
-container.bind(Main).toSelf().inSingletonScope();
-container.bind(Users).toSelf().inSingletonScope();
+    ServicesModule.register(container);
+    ControllersModule.register(container);
 
-container.bind(Container).toConstantValue(container);
+    container.bind(Container).toConstantValue(container);
 
-export { container };
+    export { container };
