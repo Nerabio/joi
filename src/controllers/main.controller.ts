@@ -80,11 +80,12 @@ export class Main {
   }
 
   request(message: string): Promise<string> {
-    this.history.add("user", message);
     return new Promise(async (resolve, reject) => {
       this.storageService.create();
       const responseAi = await this.aiService.request(message);
-      resolve(this.storageService.saveText(responseAi).answer);
+      this.storageService.saveText(responseAi);
+      this.history.add("assistant", responseAi);
+      resolve(responseAi);
     });
   }
 
