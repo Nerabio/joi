@@ -54,8 +54,7 @@ export class Main {
         ? await Promise.race([this.timeout(), this.request(original_utterance)])
         : WELCOME_MESSAGE;
 
-    console.log("input -> ", original_utterance);
-    console.log("output -> ", response);
+    console.log("history -> ", this.history.getHistory());
 
     res.json({
       response: {
