@@ -35,20 +35,24 @@ export class Main {
     if (this.prepareString(original_utterance) === CONTINUATION_PHRASE) {
       const lastMessage = Object.assign(this.storageService.get());
       console.log("- MORE -> ", lastMessage?.status);
+      const messageRes =
+        lastMessage?.status === "complete"
+          ? lastMessage.answer
+          : DEFAULT_MESSAGE;
       if (lastMessage?.status === "complete") {
         this.storageService.clear();
-        this.history.add("assistant", lastMessage.answer);
-
-        console.log("history-m -> ", this.history.getHistory());
-        res.json({
-          response: {
-            text: lastMessage.answer,
-            tts: lastMessage.answer,
-            end_session: false,
-          },
-          version: "1.0",
-        });
+        this.history.add("assistant", messageRes);
       }
+
+      console.log("history-m -> ", this.history.getHistory());
+      res.json({
+        response: {
+          text: messageRes,
+          tts: messageRes,
+          end_session: false,
+        },
+        version: "1.0",
+      });
       return;
     }
 
