@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
-import { Main, Users } from "./controllers";
-import { AiService, ConfigService, FacadeService, HistoryService, StorageService } from "./services";
+import { Main, Users } from "../../controllers";
+import { AiService, ConfigService, FacadeService, HistoryService, StorageService } from "../services";
 
 
 const container = new Container();

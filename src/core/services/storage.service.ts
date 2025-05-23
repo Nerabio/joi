@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { MessageItem } from "../interfaces";
+import {MessageItem, MessageStatus} from "../../shared/interfaces";
 
 @injectable()
 export class StorageService {
@@ -8,7 +8,7 @@ export class StorageService {
   create(): MessageItem | null {
     this.store = {
       time: Date.now(),
-      status: "pending",
+      status: MessageStatus.PENDING,
     };
     return this.store;
   }
@@ -18,7 +18,7 @@ export class StorageService {
   }
 
   saveText(message: string): MessageItem | null {
-    this.store = { ...this.store, answer: message, status: "complete" };
+    this.store = { ...this.store, answer: message, status: MessageStatus.COMPLETE };
     return this.store;
   }
 

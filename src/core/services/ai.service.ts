@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import OpenAI from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/chat";
-import { MessageHistory, SettingsAi } from "../interfaces";
+import {MessageHistory, Role, SettingsAi} from "../../shared/interfaces";
 import { ConfigService } from "./config.service";
 import { HistoryService } from "./history.service";
 
@@ -42,14 +42,14 @@ export class AiService {
   ): ChatCompletionMessageParam[] {
     const messageParam = [
       {
-        role: "system",
+        role: Role.SYSTEM,
         content: settings.systemRole,
       },
     ] as ChatCompletionMessageParam[];
 
     history.map((item) => messageParam.push(item));
     messageParam.push({
-      role: "user",
+      role: Role.USER,
       content: ask,
     });
 

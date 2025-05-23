@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { Post, controller } from "../decorators/routes.decorator";
+import { Post, controller } from "../core/decorators";
 import { injectable } from "inversify";
-import { HistoryService, FacadeService } from "../services";
+import { HistoryService, FacadeService } from "../core/services";
 
 @controller("/")
 @injectable()

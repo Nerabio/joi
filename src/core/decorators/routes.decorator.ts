@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Router } from "express";
-import { container } from "../container";
+import { container } from "../DI/container";
 export const appRouter = Router();
 
 // Типы для удобства

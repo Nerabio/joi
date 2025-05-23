@@ -1,9 +1,9 @@
 import "reflect-metadata";
-import { container } from "./container";
-import { appRouter } from "./decorators";
+import { container } from "./core/DI/container";
+import { appRouter } from "./core/decorators";
 import * as express from "express";
 
-import { ConfigService } from "./services/config.service";
+import { ConfigService } from "./core/services";
 require("dotenv").config();
 
 const config = container.get(ConfigService);

@@ -1,8 +1,11 @@
 import { injectable } from "inversify";
-import { CONTINUATION_PHRASE, DEFAULT_MESSAGE, WELCOME_MESSAGE } from "../constants";
+import { CONTINUATION_PHRASE, DEFAULT_MESSAGE, WELCOME_MESSAGE } from "../../shared/constants/constants";
 import { AiService } from "./ai.service";
 import { HistoryService } from "./history.service";
 import { StorageService } from "./storage.service";
+import {MessageStatus, Role} from "../../shared/interfaces";
+import {ApiErrorException} from "../../shared/errors/api-error.exception";
+
 
 
 @injectable()
@@ -14,22 +17,27 @@ export class FacadeService {
       ) {}
 
     async getAnswer(question: string): Promise<string> {
-        if (this.isContinuePhrase(question)) {
-            return await this.getDelayedAnswer();
-        }
+        try {
+          if (this.isContinuePhrase(question)) {
+              return await this.getDelayedAnswer();
+          }
 
-    return question.length > 0
-        ? await Promise.race([this.timeout(), this.request(question)])
-        : WELCOME_MESSAGE;
+            return question.length > 0
+                ? await Promise.race([this.timeout(), this.request(question)])
+                : WELCOME_MESSAGE;
+        } catch (error) {
+            console.log('Error in getAnswer', error);
+            throw new ApiErrorException('Failed to get answer', 500);
+        }
     }
 
     private request(message: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
           this.storage.create();
-          this.history.add("user", message);
+          this.history.add(Role.USER, message);
           const responseAi = await this.ai.request(message);
           this.storage.saveText(responseAi);
-          this.history.add("assistant", responseAi);
+          this.history.add(Role.ASSISTANT, responseAi);
           resolve(responseAi);
         });
       }
@@ -37,7 +45,7 @@ export class FacadeService {
       private getDelayedAnswer(): Promise<string>{
         const delayedAnswer = Object.assign(this.storage.get());
         console.log("- MORE -> ", delayedAnswer?.status);
-        const isComplete = delayedAnswer?.status === "complete";
+        const isComplete = delayedAnswer?.status === MessageStatus.COMPLETE;
         const messageRes =
         isComplete
             ? delayedAnswer.answer
