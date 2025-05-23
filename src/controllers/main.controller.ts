@@ -48,13 +48,12 @@ export class Main {
           },
           version: "1.0",
         });
-        return;
       }
+      return;
     }
 
     const response =
-      original_utterance.length > 0 &&
-      this.prepareString(original_utterance) !== CONTINUATION_PHRASE
+      original_utterance.length > 0
         ? await Promise.race([this.timeout(), this.request(original_utterance)])
         : WELCOME_MESSAGE;
 
