@@ -3,7 +3,7 @@ import { MessageItem } from "../interfaces/message-item.interface";
 
 @injectable()
 export class StorageService {
-  private store: MessageItem;
+  private store: MessageItem = this.create();
 
   create(): MessageItem | null {
     this.store = {

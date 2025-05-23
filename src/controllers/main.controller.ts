@@ -34,6 +34,7 @@ export class Main {
 
     if (this.prepareString(original_utterance) === CONTINUATION_PHRASE) {
       const lastMessage = Object.assign(this.storageService.get());
+      console.log("- MORE -> ", lastMessage?.status);
       if (lastMessage?.status === "complete") {
         this.storageService.clear();
         this.history.add("assistant", lastMessage.answer);
@@ -83,7 +84,7 @@ export class Main {
     return new Promise(async (resolve, reject) => {
       this.storageService.create();
       const responseAi = await this.aiService.request(message);
-      this.storageService.saveText(responseAi);
+      const storeMessage = this.storageService.saveText(responseAi);
       this.history.add("assistant", responseAi);
       resolve(responseAi);
     });
