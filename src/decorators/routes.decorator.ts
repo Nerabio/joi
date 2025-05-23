@@ -20,22 +20,6 @@ export function controller(prefix: string = "") {
   };
 }
 
-// Декоратор метода — регистрирует маршрут
-// export function route(options: RouteOptions): MethodDecorator {
-//   return (
-//     target: any,
-//     methodName: string | symbol,
-//     descriptor: PropertyDescriptor
-//   ) => {
-//     const controllerPrefix =
-//       Reflect.getMetadata(CONTROLLER_PREFIX_METADATA_KEY, target.constructor) ||
-//       "";
-//     const fullPath = `${controllerPrefix}${options.path}`.replace("//", "/"); // Убираем дублирующиеся слеши
-
-//     appRouter[options.method](fullPath, descriptor.value);
-//   };
-// }
-
 export function route(options: RouteOptions): MethodDecorator {
   return (
     target: any,
@@ -62,7 +46,7 @@ export function route(options: RouteOptions): MethodDecorator {
   };
 }
 
-// Удобные декораторы для методов
+//декораторы для методов
 export const Get = (path: string = "") => route({ path, method: "get" });
 export const Post = (path: string = "") => route({ path, method: "post" });
 export const Put = (path: string = "") => route({ path, method: "put" });

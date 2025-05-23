@@ -32,27 +32,22 @@ export class Main {
   async getUsers(req: Request, res: Response): Promise<void> {
     const { original_utterance } = req.body.request;
 
-    if (this.prepareString(original_utterance) === CONTINUATION_PHRASE) {
+    if (this.isContinuePhrase(original_utterance)) {
       const lastMessage = Object.assign(this.storageService.get());
       console.log("- MORE -> ", lastMessage?.status);
+      const isComplete = lastMessage?.status === "complete";
+
       const messageRes =
-        lastMessage?.status === "complete"
+      isComplete
           ? lastMessage.answer
-          : DEFAULT_MESSAGE;
-      if (lastMessage?.status === "complete") {
+          : null;
+
+      if (isComplete) {
         this.storageService.clear();
-        this.history.add("assistant", messageRes);
       }
 
-      console.log("history-m -> ", this.history.getHistory());
-      res.json({
-        response: {
-          text: messageRes,
-          tts: messageRes,
-          end_session: false,
-        },
-        version: "1.0",
-      });
+      console.log("history-m -> ", this.history.getLastHistory(3));
+      this.sendResponse(messageRes ?? DEFAULT_MESSAGE, res);
       return;
     }
 
@@ -61,21 +56,24 @@ export class Main {
         ? await Promise.race([this.timeout(), this.request(original_utterance)])
         : WELCOME_MESSAGE;
 
-    console.log("history -> ", this.history.getHistory());
-
-    res.json({
-      response: {
-        text: response,
-        tts: response,
-        end_session: false,
-      },
-      version: "1.0",
-    });
+    console.log("history -> ", this.history.getLastHistory(3));
+    this.sendResponse(response, res);
   }
 
   @Get("/main")
   getIndex(req: Request, res: Response): void {
     res.json(Main.answer);
+  }
+
+  sendResponse(message: string, res: Response): void {
+    res.json({
+      response: {
+        text: message,
+        tts: message,
+        end_session: false,
+      },
+      version: "1.0",
+    });
   }
 
   timeout(): Promise<string> {
@@ -90,13 +88,17 @@ export class Main {
     return new Promise(async (resolve, reject) => {
       this.storageService.create();
       const responseAi = await this.aiService.request(message);
-      const storeMessage = this.storageService.saveText(responseAi);
+      this.storageService.saveText(responseAi);
       this.history.add("assistant", responseAi);
       resolve(responseAi);
     });
   }
 
-  prepareString(message: string): string {
+  private isContinuePhrase(input: string): boolean {
+    return this.prepareString(input) === CONTINUATION_PHRASE
+  }
+
+  private prepareString(message: string): string {
     return message.trim().toLowerCase();
   }
 }

@@ -14,4 +14,11 @@ export class HistoryService {
       .sort((a, b) => a[0] - b[0])
       .map((item) => item[1]);
   }
+
+  getLastHistory(count: number = 0): MessageHistory[] {
+    return this.getHistory().slice(this.map.size - count,this.map.size);
+  }
+
+  
+
 }
