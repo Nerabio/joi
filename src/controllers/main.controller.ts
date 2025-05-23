@@ -38,6 +38,8 @@ export class Main {
       if (lastMessage?.status === "complete") {
         this.storageService.clear();
         this.history.add("assistant", lastMessage.answer);
+
+        console.log("history-m -> ", this.history.getHistory());
         res.json({
           response: {
             text: lastMessage.answer,
@@ -51,7 +53,8 @@ export class Main {
     }
 
     const response =
-      original_utterance.length > 0
+      original_utterance.length > 0 &&
+      this.prepareString(original_utterance) !== CONTINUATION_PHRASE
         ? await Promise.race([this.timeout(), this.request(original_utterance)])
         : WELCOME_MESSAGE;
 
