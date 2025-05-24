@@ -69,7 +69,7 @@ export class FacadeService {
           return new Promise((resolve, reject) => {
             setTimeout(() => {
               resolve(getRandomMessage());
-            }, 3600);
+            }, 4400);
           });
         }
 }
