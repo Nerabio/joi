@@ -51,7 +51,7 @@ export class AiService {
       role: Role.USER,
       content: ask,
     });
-
+console.log(messageParam);
     return messageParam;
   }
 

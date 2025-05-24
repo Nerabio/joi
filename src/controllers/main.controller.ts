@@ -15,7 +15,7 @@ export class Main {
   async getAnswer(req: Request, res: Response): Promise<void> {
     const { original_utterance } = req.body.request;
     const message = await this.facade.getAnswer(original_utterance);
-    console.log("history -> ", this.history.getLastHistory(3));
+    //console.log("history -> ", this.history.getLastHistory(3));
     res.json({
       response: {
         text: message,
