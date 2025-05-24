@@ -4,6 +4,7 @@ import { ChatCompletionMessageParam } from "openai/resources/chat";
 import {MessageHistory, Role, SettingsAi} from "../../shared/interfaces";
 import { ConfigService } from "./config.service";
 import { HistoryService } from "./history.service";
+import {OpenAIFactory} from "../factories/openai.factory";
 
 @injectable()
 export class AiService {
@@ -12,13 +13,11 @@ export class AiService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly history: HistoryService
+    private readonly history: HistoryService,
+    private readonly openaiFactory: OpenAIFactory
   ) {
     this.settingsAi = this.getSettings(this.configService);
-    this.openai = new OpenAI({
-      baseURL: this.settingsAi.baseURL,
-      apiKey: this.settingsAi.apiKey,
-    });
+    this.openai = this.openaiFactory.create(this.settingsAi);
   }
 
   async request(ask: string): Promise<string> {
