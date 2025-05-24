@@ -34,7 +34,6 @@ export class FacadeService {
     private request(message: string): Promise<string> {
         return new Promise(async (resolve, reject) => {
           this.storage.create();
-          this.history.add(Role.USER, message);
           const responseAi = await this.ai.request(message);
           this.storage.saveText(responseAi);
           this.history.add(Role.ASSISTANT, responseAi);
@@ -69,7 +68,7 @@ export class FacadeService {
           return new Promise((resolve, reject) => {
             setTimeout(() => {
               resolve(DEFAULT_MESSAGE);
-            }, 3000);
+            }, 3600);
           });
         }
 }

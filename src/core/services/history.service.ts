@@ -3,7 +3,7 @@ import { MessageHistory, Role } from "../../shared/interfaces";
 
 @injectable()
 export class HistoryService {
-  private readonly MAX_HISTORY = 1000;
+  private readonly MAX_HISTORY = 100;
   private history: MessageHistory[] = [];
 
   add(role: Role, content: string): void {

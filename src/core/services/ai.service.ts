@@ -51,7 +51,8 @@ export class AiService {
       role: Role.USER,
       content: ask,
     });
-console.log(messageParam);
+    this.history.add(Role.USER, ask);
+    console.log(this.history);
     return messageParam;
   }
 
