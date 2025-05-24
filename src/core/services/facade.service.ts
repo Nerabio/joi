@@ -1,10 +1,11 @@
 import { injectable } from "inversify";
-import { CONTINUATION_PHRASE, DEFAULT_MESSAGE, WELCOME_MESSAGE } from "../../shared/constants/constants";
+import { CONTINUATION_PHRASE, WELCOME_MESSAGE } from "../../shared/constants/constants";
 import { AiService } from "./ai.service";
 import { HistoryService } from "./history.service";
 import { StorageService } from "./storage.service";
 import {MessageStatus, Role} from "../../shared/interfaces";
 import {ApiErrorException} from "../../shared/errors/api-error.exception";
+import {getRandomMessage} from "../../shared/utils/get-rnd-item";
 
 
 
@@ -53,7 +54,7 @@ export class FacadeService {
             if (isComplete) {
                 this.storage.clear();
               }
-        return messageRes ?? DEFAULT_MESSAGE;      
+        return messageRes ?? getRandomMessage();
       }
 
       private isContinuePhrase(input: string): boolean {
@@ -67,7 +68,7 @@ export class FacadeService {
       private timeout(): Promise<string> {
           return new Promise((resolve, reject) => {
             setTimeout(() => {
-              resolve(DEFAULT_MESSAGE);
+              resolve(getRandomMessage());
             }, 3600);
           });
         }
