@@ -1,17 +1,17 @@
-import { Request, Response } from "express";
-import { Post, controller } from "../core/decorators";
-import { injectable } from "inversify";
-import { HistoryService, FacadeService } from "../core/services";
+import { Request, Response } from 'express';
+import { Post, controller } from '../core/decorators';
+import { injectable } from 'inversify';
+import { HistoryService, FacadeService } from '../core/services';
 
-@controller("/")
+@controller('/')
 @injectable()
 export class Main {
   constructor(
     private readonly history: HistoryService,
-    private readonly facade: FacadeService
+    private readonly facade: FacadeService,
   ) {}
 
-  @Post("/main")
+  @Post('/main')
   async getAnswer(req: Request, res: Response): Promise<void> {
     const { original_utterance } = req.body.request;
     const message = await this.facade.getAnswer(original_utterance);
@@ -22,8 +22,7 @@ export class Main {
         tts: message,
         end_session: false,
       },
-      version: "1.0",
+      version: '1.0',
     });
   }
- 
 }

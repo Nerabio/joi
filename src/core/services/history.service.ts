@@ -1,5 +1,5 @@
-import { injectable } from "inversify";
-import { MessageHistory, Role } from "../../shared/interfaces";
+import { injectable } from 'inversify';
+import { MessageHistory, Role } from '../../shared/interfaces';
 
 @injectable()
 export class HistoryService {
@@ -14,11 +14,6 @@ export class HistoryService {
   }
 
   getLastHistory(count: number = 0): MessageHistory[] {
-    return count > 0
-        ? this.history.slice(-count)
-        : [...this.history];
+    return count > 0 ? this.history.slice(-count) : [...this.history];
   }
-
-  
-
 }

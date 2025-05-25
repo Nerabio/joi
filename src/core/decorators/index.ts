@@ -1,1 +1,1 @@
-export * from "./routes.decorator";
+export * from './routes.decorator';

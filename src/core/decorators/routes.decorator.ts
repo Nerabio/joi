@@ -1,35 +1,30 @@
-import "reflect-metadata";
-import { Router } from "express";
-import { container } from "../DI/container";
+import 'reflect-metadata';
+import { Router } from 'express';
+import { container } from '../DI/container';
 export const appRouter = Router();
 
 // Типы для удобства
-type HttpMethod = "get" | "post" | "put" | "delete" | "patch";
+type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
 interface RouteOptions {
   path: string;
   method: HttpMethod;
 }
 
 // Ключ для хранения метаданных класса
-const CONTROLLER_PREFIX_METADATA_KEY = "controller:prefix";
+const CONTROLLER_PREFIX_METADATA_KEY = 'controller:prefix';
 
 // Декоратор класса — задаёт базовый путь для всех методов
-export function controller(prefix: string = "") {
+export function controller(prefix: string = '') {
   return (target: any) => {
     Reflect.defineMetadata(CONTROLLER_PREFIX_METADATA_KEY, prefix, target);
   };
 }
 
 export function route(options: RouteOptions): MethodDecorator {
-  return (
-    target: any,
-    methodName: string | symbol,
-    descriptor: PropertyDescriptor
-  ) => {
+  return (target: any, methodName: string | symbol, descriptor: PropertyDescriptor) => {
     const controllerPrefix =
-      Reflect.getMetadata(CONTROLLER_PREFIX_METADATA_KEY, target.constructor) ||
-      "";
-    const fullPath = `${controllerPrefix}${options.path}`.replace("//", "/");
+      Reflect.getMetadata(CONTROLLER_PREFIX_METADATA_KEY, target.constructor) || '';
+    const fullPath = `${controllerPrefix}${options.path}`.replace('//', '/');
 
     // Заменяем descriptor.value на обёртку, которая создаёт инстанс через DI
     const originalMethod = descriptor.value;
@@ -47,7 +42,7 @@ export function route(options: RouteOptions): MethodDecorator {
 }
 
 //декораторы для методов
-export const Get = (path: string = "") => route({ path, method: "get" });
-export const Post = (path: string = "") => route({ path, method: "post" });
-export const Put = (path: string = "") => route({ path, method: "put" });
-export const Delete = (path: string = "") => route({ path, method: "delete" });
+export const Get = (path: string = '') => route({ path, method: 'get' });
+export const Post = (path: string = '') => route({ path, method: 'post' });
+export const Put = (path: string = '') => route({ path, method: 'put' });
+export const Delete = (path: string = '') => route({ path, method: 'delete' });

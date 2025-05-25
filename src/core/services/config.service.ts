@@ -1,6 +1,6 @@
-import { injectable } from "inversify";
-import { ConfigApp } from "../../shared/interfaces";
-import { snakeToCamel } from "../../shared/utils/snake-to-camel";
+import { injectable } from 'inversify';
+import { ConfigApp } from '../../shared/interfaces';
+import { snakeToCamel } from '../../shared/utils/snake-to-camel';
 
 @injectable()
 export class ConfigService {

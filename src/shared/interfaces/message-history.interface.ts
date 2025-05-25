@@ -1,8 +1,7 @@
-
-export enum  Role {
-  USER = "user",
-  SYSTEM = "system",
-  ASSISTANT = "assistant"
+export enum Role {
+  USER = 'user',
+  SYSTEM = 'system',
+  ASSISTANT = 'assistant',
 }
 
 export interface MessageHistory {

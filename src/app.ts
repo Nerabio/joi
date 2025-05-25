@@ -1,11 +1,11 @@
-import "reflect-metadata";
-import { container } from "./core/DI/container";
-import { appRouter } from "./core/decorators";
-import * as express from "express";
+import 'reflect-metadata';
+import { container } from './core/DI/container';
+import { appRouter } from './core/decorators';
+import * as express from 'express';
 
-import { ConfigService } from "./core/services";
-import {requestLogger} from "./core/middlewares/logger.middleware";
-require("dotenv").config();
+import { ConfigService } from './core/services';
+import { requestLogger } from './core/middlewares/logger.middleware';
+require('dotenv').config();
 
 const config = container.get(ConfigService);
 const port = 8080;

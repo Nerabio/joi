@@ -1,10 +1,10 @@
-import { injectable } from "inversify";
-import OpenAI from "openai";
-import { ChatCompletionMessageParam } from "openai/resources/chat";
-import {MessageHistory, Role, SettingsAi} from "../../shared/interfaces";
-import { ConfigService } from "./config.service";
-import { HistoryService } from "./history.service";
-import {OpenAIFactory} from "../factories/openai.factory";
+import { injectable } from 'inversify';
+import OpenAI from 'openai';
+import { ChatCompletionMessageParam } from 'openai/resources/chat';
+import { MessageHistory, Role, SettingsAi } from '../../shared/interfaces';
+import { ConfigService } from './config.service';
+import { HistoryService } from './history.service';
+import { OpenAIFactory } from '../factories/openai.factory';
 
 @injectable()
 export class AiService {
@@ -14,7 +14,7 @@ export class AiService {
   constructor(
     private readonly configService: ConfigService,
     private readonly history: HistoryService,
-    private readonly openaiFactory: OpenAIFactory
+    private readonly openaiFactory: OpenAIFactory,
   ) {
     this.settingsAi = this.getSettings(this.configService);
     this.openai = this.openaiFactory.create(this.settingsAi);
@@ -24,11 +24,7 @@ export class AiService {
     const completion = await this.openai.chat.completions.create({
       model: this.settingsAi.model,
       max_completion_tokens: this.settingsAi.maxCompletionTokens ?? 300,
-      messages: this.makeMessage(
-        ask,
-        this.settingsAi,
-        this.history.getLastHistory(25)
-      ),
+      messages: this.makeMessage(ask, this.settingsAi, this.history.getLastHistory(25)),
     });
 
     return completion.choices[0].message.content;
@@ -37,7 +33,7 @@ export class AiService {
   private makeMessage(
     ask: string,
     settings: SettingsAi,
-    history: MessageHistory[]
+    history: MessageHistory[],
   ): ChatCompletionMessageParam[] {
     const messageParam = [
       {
@@ -56,13 +52,13 @@ export class AiService {
     return messageParam;
   }
 
-  private   getSettings(configService: ConfigService): SettingsAi {
+  private getSettings(configService: ConfigService): SettingsAi {
     return {
-      baseURL: configService.getKey("baseUrl"),
-      apiKey: configService.getKey("apiKey"),
-      model: configService.getKey("model"),
-      systemRole: configService.getKey("systemRole"),
-      maxCompletionTokens: +configService.getKey("maxCompletionTokens"),
+      baseURL: configService.getKey('baseUrl'),
+      apiKey: configService.getKey('apiKey'),
+      model: configService.getKey('model'),
+      systemRole: configService.getKey('systemRole'),
+      maxCompletionTokens: +configService.getKey('maxCompletionTokens'),
     };
   }
 }

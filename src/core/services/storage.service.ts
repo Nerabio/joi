@@ -1,5 +1,5 @@
-import { injectable } from "inversify";
-import {MessageItem, MessageStatus} from "../../shared/interfaces";
+import { injectable } from 'inversify';
+import { MessageItem, MessageStatus } from '../../shared/interfaces';
 
 @injectable()
 export class StorageService {
