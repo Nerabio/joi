@@ -4,7 +4,9 @@ import { Container, injectable } from 'inversify';
 @injectable()
 export class ControllersModule {
   public static register(container: Container): void {
-    container.bind(Main).toSelf().inSingletonScope();
-    container.bind(Users).toSelf().inSingletonScope();
+    const controllers = [Main, Users];
+    controllers.forEach(controller => {
+      container.bind(controller).toSelf().inSingletonScope();
+    });
   }
 }
