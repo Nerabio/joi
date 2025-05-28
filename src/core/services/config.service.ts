@@ -1,9 +1,10 @@
 import { injectable } from 'inversify';
 import { ConfigApp } from '../../shared/interfaces';
 import { snakeToCamel } from '../../shared/utils/snake-to-camel';
+import { IConfigService } from '../../shared/interfaces/config-service.interface';
 
 @injectable()
-export class ConfigService {
+export class ConfigService implements IConfigService {
   private readonly config: ConfigApp;
 
   constructor() {

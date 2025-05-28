@@ -5,9 +5,10 @@ import { MessageHistory, Role, SettingsAi } from '../../shared/interfaces';
 import { ConfigService } from './config.service';
 import { HistoryService } from './history.service';
 import { OpenAIFactory } from '../factories/openai.factory';
+import { IAiService } from '../../shared/interfaces/iai-service.interface';
 
 @injectable()
-export class AiService {
+export class AiService implements IAiService {
   private readonly openai: OpenAI;
   private readonly settingsAi: SettingsAi;
 
@@ -30,7 +31,7 @@ export class AiService {
     return completion.choices[0].message.content;
   }
 
-  private makeMessage(
+  makeMessage(
     ask: string,
     settings: SettingsAi,
     history: MessageHistory[],
@@ -47,7 +48,7 @@ export class AiService {
       content: ask,
     });
     this.history.add(Role.USER, ask);
-    console.log(this.history);
+    //console.log(this.history);
     return messageParam;
   }
 
