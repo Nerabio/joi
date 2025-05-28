@@ -8,8 +8,8 @@ import { OpenAIFactory } from '../factories/openai.factory';
 
 @injectable()
 export class AiService {
-  private openai: OpenAI;
-  private settingsAi: SettingsAi;
+  private readonly openai: OpenAI;
+  private readonly settingsAi: SettingsAi;
 
   constructor(
     private readonly configService: ConfigService,
@@ -41,8 +41,7 @@ export class AiService {
         content: settings.systemRole,
       },
     ] as ChatCompletionMessageParam[];
-
-    history.map((item) => messageParam.push(item));
+    history.forEach((item) => messageParam.push(item));
     messageParam.push({
       role: Role.USER,
       content: ask,

@@ -4,7 +4,7 @@ import { MessageHistory, Role } from '../../shared/interfaces';
 @injectable()
 export class HistoryService {
   private readonly MAX_HISTORY = 100;
-  private history: MessageHistory[] = [];
+  private readonly history: MessageHistory[] = [];
 
   add(role: Role, content: string): void {
     this.history.push({ role, content });
