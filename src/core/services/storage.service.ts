@@ -8,13 +8,13 @@ export class StorageService {
   create(): MessageItem | null {
     this.store = {
       time: Date.now(),
-      status: MessageStatus.PENDING,
+      status: MessageStatus.INIT,
     };
     return this.store;
   }
 
   clear(): void {
-    this.store = null;
+    this.store = { ...this.store, status: MessageStatus.CLEAR };
   }
 
   saveText(message: string): MessageItem | null {
@@ -24,5 +24,9 @@ export class StorageService {
 
   get(): MessageItem | null {
     return this.store;
+  }
+
+  isComplete(): boolean {
+    return this.store.status === MessageStatus.COMPLETE;
   }
 }

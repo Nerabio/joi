@@ -5,6 +5,8 @@ export interface MessageItem {
 }
 
 export enum MessageStatus {
+  INIT = 'init',
+  CLEAR = 'clear',
   PENDING = 'pending',
   COMPLETE = 'complete',
 }

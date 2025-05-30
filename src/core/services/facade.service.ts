@@ -43,13 +43,12 @@ export class FacadeService {
   private getDelayedAnswer(): Promise<string> {
     const delayedAnswer = Object.assign(this.storage.get());
     console.log('- MORE -> ', delayedAnswer?.status);
-    const isComplete = delayedAnswer?.status === MessageStatus.COMPLETE;
-    const messageRes = isComplete ? delayedAnswer.answer : null;
-
-    if (isComplete) {
-      this.storage.clear();
+    const isComplete = this.storage.isComplete();
+    if (!isComplete) {
+      return Promise.resolve(getRandomMessage());
     }
-    return messageRes ?? getRandomMessage();
+    this.storage.clear();
+    return delayedAnswer.answer;
   }
 
   private isContinuePhrase(input: string): boolean {
@@ -64,7 +63,7 @@ export class FacadeService {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(getRandomMessage());
-      }, 4400);
+      }, 4100);
     });
   }
 }
