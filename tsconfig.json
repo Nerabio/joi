@@ -4,6 +4,7 @@
     "lib": ["ES2018"],
     "target": "es2017",
     "noImplicitAny": true,
+    "esModuleInterop": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "outDir": "dist",

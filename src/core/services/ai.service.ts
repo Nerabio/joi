@@ -1,31 +1,60 @@
 import { injectable } from 'inversify';
 import OpenAI from 'openai';
 import { ChatCompletionMessageParam } from 'openai/resources/chat';
-import { MessageHistory, Role, SettingsAi } from '../../shared/interfaces';
-import { ConfigService } from './config.service';
+import { MessageHistory, ModelsSetting, Provider, Role, SyslemRole } from '../../shared/interfaces';
 import { HistoryService } from './history.service';
 import { OpenAIFactory } from '../factories/openai.factory';
 import { IAiService } from '../../shared/interfaces/iai-service.interface';
+import { ProviderService } from './provider.service';
+import { LogService } from './log.service';
 
 @injectable()
 export class AiService implements IAiService {
   private readonly openai: OpenAI;
-  private readonly settingsAi: SettingsAi;
+  private readonly currentProvider: Provider;
+  private readonly systemRole: SyslemRole;
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly history: HistoryService,
     private readonly openaiFactory: OpenAIFactory,
+    private readonly providerService: ProviderService,
+    private readonly log: LogService,
   ) {
-    this.settingsAi = this.getSettings(this.configService);
-    this.openai = this.openaiFactory.create(this.settingsAi);
+    this.currentProvider = this.providerService.getProvider();
+    this.log.info(Object.values(this.currentProvider).join(' -> '));
+    this.systemRole = this.providerService.getSystemRole();
+    this.log.info(
+      `currentProvider ${this.currentProvider.provider} -> response Ai -> ${this.systemRole.name}`,
+    );
+    this.openai = this.openaiFactory.create(this.currentProvider);
   }
 
   async request(ask: string): Promise<string> {
+    //Frequency_penalty:  Если модель повторяет фразы («ты такой большой» → «ты такой огромный»), повысь до 0.3–0.5
+    //Top_p (Nucleus sampling):Лучше держать 0.8–0.95 — это отсекает абсурдные варианты, но сохраняет креативность.
+    //presence_penalty=0.1   # Поощряет новизну в ответах
+    const currentModel = this.currentProvider.models[0];
+    const {
+      model,
+      temperature,
+      max_completion_tokens,
+      top_p,
+      frequency_penalty,
+      presence_penalty,
+    } = currentModel;
     const completion = await this.openai.chat.completions.create({
-      model: this.settingsAi.model,
-      max_completion_tokens: this.settingsAi.maxCompletionTokens ?? 300,
-      messages: this.makeMessage(ask, this.settingsAi, this.history.getLastHistory(25)),
+      model: model,
+      max_completion_tokens: max_completion_tokens,
+      messages: this.makeMessage(
+        ask,
+        currentModel,
+        this.systemRole,
+        this.history.getLastHistory(25),
+      ),
+      top_p: top_p,
+      temperature: temperature,
+      frequency_penalty: frequency_penalty,
+      presence_penalty: presence_penalty,
     });
 
     return completion.choices[0].message.content;
@@ -33,13 +62,14 @@ export class AiService implements IAiService {
 
   makeMessage(
     ask: string,
-    settings: SettingsAi,
+    settings: ModelsSetting,
+    systemRole: SyslemRole,
     history: MessageHistory[],
   ): ChatCompletionMessageParam[] {
     const messageParam = [
       {
         role: Role.SYSTEM,
-        content: settings.systemRole,
+        content: systemRole.role,
       },
     ] as ChatCompletionMessageParam[];
     history.forEach((item) => messageParam.push(item));
@@ -50,15 +80,5 @@ export class AiService implements IAiService {
     this.history.add(Role.USER, ask);
     //console.log(this.history);
     return messageParam;
-  }
-
-  private getSettings(configService: ConfigService): SettingsAi {
-    return {
-      baseURL: configService.getKey('baseUrl'),
-      apiKey: configService.getKey('apiKey'),
-      model: configService.getKey('model'),
-      systemRole: configService.getKey('systemRole'),
-      maxCompletionTokens: +configService.getKey('maxCompletionTokens'),
-    };
   }
 }

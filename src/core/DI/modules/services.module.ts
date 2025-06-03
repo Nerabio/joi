@@ -4,6 +4,8 @@ import {
   ConfigService,
   FacadeService,
   HistoryService,
+  LogService,
+  ProviderService,
   StorageService,
 } from '../../services';
 import { OpenAIFactory } from '../../factories/openai.factory';
@@ -11,8 +13,17 @@ import { OpenAIFactory } from '../../factories/openai.factory';
 @injectable()
 export class ServicesModule {
   public static register(container: Container): void {
-    const services = [ConfigService, FacadeService, OpenAIFactory, AiService, HistoryService, StorageService];
-    services.forEach(service => {
+    const services = [
+      LogService,
+      ConfigService,
+      FacadeService,
+      OpenAIFactory,
+      AiService,
+      HistoryService,
+      StorageService,
+      ProviderService,
+    ];
+    services.forEach((service) => {
       container.bind(service).toSelf().inSingletonScope();
     });
   }

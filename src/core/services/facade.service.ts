@@ -6,6 +6,7 @@ import { StorageService } from './storage.service';
 import { MessageStatus, Role } from '../../shared/interfaces';
 import { ApiErrorException } from '../../shared/errors/api-error.exception';
 import { getRandomMessage } from '../../shared/utils/get-rnd-item';
+import { LogService } from './log.service';
 
 @injectable()
 export class FacadeService {
@@ -13,6 +14,7 @@ export class FacadeService {
     private readonly ai: AiService,
     private readonly storage: StorageService,
     private readonly history: HistoryService,
+    private readonly log: LogService
   ) {}
 
   async getAnswer(question: string): Promise<string> {
@@ -26,23 +28,26 @@ export class FacadeService {
         : WELCOME_MESSAGE;
     } catch (error) {
       console.log('Error in getAnswer', error);
+      this.log.error(error);
       throw new ApiErrorException('Failed to get answer', 500);
     }
   }
 
   private request(message: string): Promise<string> {
+    this.log.info(`request user -> ${message}`)
     return new Promise(async (resolve, reject) => {
       this.storage.create();
       const responseAi = await this.ai.request(message);
       this.storage.saveText(responseAi);
       this.history.add(Role.ASSISTANT, responseAi);
+      this.log.info(`response Ai -> ${responseAi}`)
       resolve(responseAi);
     });
   }
 
   private getDelayedAnswer(): Promise<string> {
     const delayedAnswer = Object.assign(this.storage.get());
-    console.log('- MORE -> ', delayedAnswer?.status);
+    this.log.info(delayedAnswer)
     const isComplete = this.storage.isComplete();
     if (!isComplete) {
       return Promise.resolve(getRandomMessage());

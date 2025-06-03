@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { container } from './core/DI/container';
 import { appRouter } from './core/decorators';
-import * as express from 'express';
+import express = require('express');
 
 import { ConfigService } from './core/services';
 import { requestLogger } from './core/middlewares/logger.middleware';

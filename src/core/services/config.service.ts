@@ -2,6 +2,7 @@ import { injectable } from 'inversify';
 import { ConfigApp } from '../../shared/interfaces';
 import { snakeToCamel } from '../../shared/utils/snake-to-camel';
 import { IConfigService } from '../../shared/interfaces/config-service.interface';
+import { ParsingErrorException } from '../../shared/errors/parsing-error.exception';
 
 @injectable()
 export class ConfigService implements IConfigService {
@@ -20,6 +21,15 @@ export class ConfigService implements IConfigService {
       console.warn(`Config key "${String(key)}" not found`);
     }
     return this.config[key];
+  }
+
+  getCollection<T>(key: string): T | null {
+    try {
+      const keyStr = this.getKey(key);
+      return JSON.parse(keyStr) as T;
+    } catch (error) {
+      throw new ParsingErrorException(error.message);
+    }
   }
 
   private initConfig(env: NodeJS.ProcessEnv): ConfigApp {
