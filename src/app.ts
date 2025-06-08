@@ -4,7 +4,6 @@ import { appRouter } from './core/decorators';
 import express = require('express');
 
 import { ConfigService } from './core/services';
-import { requestLogger } from './core/middlewares/logger.middleware';
 require('dotenv').config();
 
 const config = container.get(ConfigService);

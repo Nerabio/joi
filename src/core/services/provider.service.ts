@@ -12,11 +12,11 @@ export class ProviderService {
 
   getProvider(): Provider {
     const providers = this.configService.getCollection<Provider[]>('providers');
-    return providers[1];
+    return providers.find((p) => p.provider === 'openrouter.ai');
   }
 
   getSystemRole(): SyslemRole {
     const roles = this.configService.getCollection<SyslemRole[]>('roles');
-    return roles[2];
+    return roles.find((r) => r.name === 'passionate_girl');
   }
 }
