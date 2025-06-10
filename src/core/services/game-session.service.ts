@@ -11,7 +11,7 @@ export class GameSessionService {
 
   constructor(
     @inject(ProviderService) private readonly providerService: ProviderService,
-    private readonly aiService: AiService,
+    @inject(AiService) private readonly aiService: AiService,
     private readonly stateService: GameStateService,
   ) {
     this.systemRole = this.providerService.getSystemRole();
