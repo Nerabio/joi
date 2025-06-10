@@ -1,21 +1,28 @@
-import { inject, injectable } from 'inversify';
-import { AiService } from './ai.service';
-import { ProviderService } from './provider.service';
+import { injectable } from 'inversify';
+
 import { SystemRole } from '../../shared/interfaces';
-import { GameStateService } from './game-state.service';
 import Handlebars from 'handlebars';
+import { AiService } from './ai.service';
+import { GameStateService } from './game-state.service';
+import { ProviderService } from './provider.service';
+import { LogService } from './log.service';
 
 @injectable()
 export class GameSessionService {
   private readonly systemRole: SystemRole;
 
   constructor(
-    @inject(ProviderService) private readonly providerService: ProviderService,
-    @inject(AiService) private readonly aiService: AiService,
+    private readonly aiService: AiService,
+    private readonly providerService: ProviderService,
     private readonly stateService: GameStateService,
+    private readonly log: LogService,
   ) {
     this.systemRole = this.providerService.getSystemRole();
   }
+
+  // async handleInput(userInput: string): Promise<string> {
+  //   return Promise.resolve(userInput);
+  // }
 
   async handleInput(userInput: string): Promise<string> {
     const systemPrompt = this.buildPrompt(userInput, this.systemRole);
@@ -34,12 +41,13 @@ export class GameSessionService {
   private processResponse(aiResponse: string): string {
     try {
       const data = JSON.parse(aiResponse);
+      this.log.info('processResponse input->>', data);
       if (data.update_state) {
         this.stateService.updateState(data.update_state);
       }
       return data.response;
     } catch (e) {
-      return 'Корабельный компьютер глючит... Повторите.';
+      return 'Сбой искусственного интеллекта корабля... Критическая ошибка.';
     }
   }
 }

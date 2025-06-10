@@ -7,7 +7,7 @@ import { ProviderService } from './provider.service';
 @injectable()
 export class GameStateService {
   private state: GameState;
-  private readonly STATE_FILE = 'game-state.json';
+  private readonly STATE_FILE = 'temps/game-state.json';
 
   constructor(
     @inject(ProviderService) private readonly providerService: ProviderService,

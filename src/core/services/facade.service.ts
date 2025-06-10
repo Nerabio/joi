@@ -5,15 +5,19 @@ import { StorageService } from './storage.service';
 import { ApiErrorException } from '../../shared/errors/api-error.exception';
 import { getRandomMessage } from '../../shared/utils/get-rnd-item';
 import { LogService } from './log.service';
-import { RequestFactory } from '../factories/request.factory';
-import { Role } from '../../shared/interfaces';
+import { Role, SystemRole, SystemType } from '../../shared/interfaces';
+import { AiService } from './ai.service';
+import { GameSessionService } from './game-session.service';
+import { ProviderService } from './provider.service';
 
 @injectable()
 export class FacadeService {
   constructor(
-    private readonly requestFactory: RequestFactory,
     private readonly storage: StorageService,
     private readonly history: HistoryService,
+    private readonly aiService: AiService,
+    private readonly gameService: GameSessionService,
+    private readonly provider: ProviderService,
     private readonly log: LogService,
   ) {}
 
@@ -37,12 +41,18 @@ export class FacadeService {
     this.log.info(`request user -> ${message}`);
     return new Promise(async (resolve, reject) => {
       this.storage.create();
-      const responseAi = await this.requestFactory.request(message);
+      const responseAi = await this.requestFactory(message, this.provider.getSystemRole());
       this.storage.saveText(responseAi);
       this.history.add(Role.ASSISTANT, responseAi);
       this.log.info(`response Ai -> ${responseAi}`);
       resolve(responseAi);
     });
+  }
+
+  requestFactory(ask: string, systemRole: SystemRole): Promise<string> {
+    return systemRole?.type === SystemType.GAME
+      ? this.gameService.handleInput(ask)
+      : this.aiService.request(ask);
   }
 
   private getDelayedAnswer(): Promise<string> {

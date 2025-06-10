@@ -24,7 +24,7 @@ export class AiService implements IAiService {
     this.log.info(Object.values(this.currentProvider).join(' -> '));
     this.systemRole = this.providerService.getSystemRole();
     this.log.info(
-      `currentProvider ${this.currentProvider.provider} -> response Ai -> ${this.systemRole.name}`,
+      `currentProvider ${this.currentProvider?.provider} -> systemRole Ai -> ${this.systemRole?.name}`,
     );
     this.openai = this.openaiFactory.create(this.currentProvider);
   }
@@ -42,15 +42,26 @@ export class AiService implements IAiService {
       frequency_penalty,
       presence_penalty,
     } = currentModel;
+
+    const chatCompletionMessage = this.makeMessage(
+      ask,
+      currentModel,
+      this.systemRole,
+      this.history.getLastHistory(5),
+    );
+
+    this.log.info(
+      'HISTORY MESSAGE --->>',
+      this.history
+        .getLastHistory(5)
+        .map((m) => m.role + '| ' + m.content)
+        .join(' >> '),
+    );
+
     const completion = await this.openai.chat.completions.create({
       model: model,
       max_completion_tokens: max_completion_tokens,
-      messages: this.makeMessage(
-        ask,
-        currentModel,
-        this.systemRole,
-        this.history.getLastHistory(25),
-      ),
+      messages: chatCompletionMessage,
       top_p: top_p,
       temperature: temperature,
       frequency_penalty: frequency_penalty,

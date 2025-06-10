@@ -11,7 +11,6 @@ import {
   StorageService,
 } from '../../services';
 import { OpenAIFactory } from '../../factories/openai.factory';
-import { RequestFactory } from '../../factories/request.factory';
 
 @injectable()
 export class ServicesModule {
@@ -24,10 +23,9 @@ export class ServicesModule {
       AiService,
       HistoryService,
       StorageService,
-      ProviderService,
       GameStateService,
       GameSessionService,
-      RequestFactory,
+      ProviderService,
     ];
     services.forEach((service) => {
       container.bind(service).toSelf().inSingletonScope();
