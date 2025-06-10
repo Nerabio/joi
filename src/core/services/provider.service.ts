@@ -11,8 +11,6 @@ export class ProviderService {
   private readonly systemRole: SystemRole[];
   constructor(
     private readonly configService: ConfigService,
-    private readonly gameService: GameSessionService,
-    private readonly aiService: AiService,
     private readonly log: LogService,
   ) {
     this.providers = this.configService.getCollection<Provider[]>('providers');
@@ -33,13 +31,5 @@ export class ProviderService {
       systemRole.role = newSystemRole;
       this.log.info(newSystemRole);
     }
-  }
-
-  requestFactory(ask: string): Promise<string> {
-    const systemRole = this.getSystemRole();
-    this.log.info('requestFactory is game ->> ', systemRole?.type);
-    return systemRole?.type === SystemType.GAME
-      ? this.gameService.handleInput(ask)
-      : this.aiService.request(ask);
   }
 }

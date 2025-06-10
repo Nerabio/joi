@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { AiService } from './ai.service';
 import { ProviderService } from './provider.service';
 import { SystemRole } from '../../shared/interfaces';
@@ -10,8 +10,8 @@ export class GameSessionService {
   private readonly systemRole: SystemRole;
 
   constructor(
+    @inject(ProviderService) private readonly providerService: ProviderService,
     private readonly aiService: AiService,
-    private readonly providerService: ProviderService,
     private readonly stateService: GameStateService,
   ) {
     this.systemRole = this.providerService.getSystemRole();

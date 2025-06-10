@@ -5,3 +5,5 @@ export * from './history.service';
 export * from './storage.service';
 export * from './log.service';
 export * from './provider.service';
+export * from './game-session.service';
+export * from './game-state.service';

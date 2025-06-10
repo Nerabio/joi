@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { LogService } from './log.service';
 import { readFileSync, writeFileSync } from 'fs';
 import { GameState } from '../../shared/interfaces';
@@ -10,7 +10,7 @@ export class GameStateService {
   private readonly STATE_FILE = 'game-state.json';
 
   constructor(
-    private readonly providerService: ProviderService,
+    @inject(ProviderService) private readonly providerService: ProviderService,
     private readonly log: LogService,
   ) {
     this.loadState();

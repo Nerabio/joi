@@ -6,9 +6,9 @@ import { GameModule } from './modules/game.module';
 
 const container = new Container();
 
+//GameModule.register(container);
 ServicesModule.register(container);
 ControllersModule.register(container);
-GameModule.register(container);
 
 container.bind(Container).toConstantValue(container);
 

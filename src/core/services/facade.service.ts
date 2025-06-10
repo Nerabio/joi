@@ -1,21 +1,19 @@
 import { injectable } from 'inversify';
 import { CONTINUATION_PHRASE, WELCOME_MESSAGE } from '../../shared/constants/constants';
-import { AiService } from './ai.service';
 import { HistoryService } from './history.service';
 import { StorageService } from './storage.service';
-import { MessageStatus, Role } from '../../shared/interfaces';
 import { ApiErrorException } from '../../shared/errors/api-error.exception';
 import { getRandomMessage } from '../../shared/utils/get-rnd-item';
 import { LogService } from './log.service';
-import { ProviderService } from './provider.service';
+import { RequestFactory } from '../factories/request.factory';
+import { Role } from '../../shared/interfaces';
 
 @injectable()
 export class FacadeService {
   constructor(
-    private readonly ai: AiService,
+    private readonly requestFactory: RequestFactory,
     private readonly storage: StorageService,
     private readonly history: HistoryService,
-    private readonly provider: ProviderService,
     private readonly log: LogService,
   ) {}
 
@@ -39,7 +37,7 @@ export class FacadeService {
     this.log.info(`request user -> ${message}`);
     return new Promise(async (resolve, reject) => {
       this.storage.create();
-      const responseAi = await this.provider.requestFactory(message);
+      const responseAi = await this.requestFactory.request(message);
       this.storage.saveText(responseAi);
       this.history.add(Role.ASSISTANT, responseAi);
       this.log.info(`response Ai -> ${responseAi}`);
