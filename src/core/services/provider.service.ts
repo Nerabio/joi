@@ -1,9 +1,7 @@
 import { injectable } from 'inversify';
 import { ConfigService } from './config.service';
 import { LogService } from './log.service';
-import { Provider, SystemRole, SystemType } from '../../shared/interfaces';
-import { GameSessionService } from './game-session.service';
-import { AiService } from './ai.service';
+import { Provider, SystemRole } from '../../shared/interfaces';
 
 @injectable()
 export class ProviderService {

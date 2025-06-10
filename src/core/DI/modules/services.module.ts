@@ -25,9 +25,9 @@ export class ServicesModule {
       HistoryService,
       StorageService,
       ProviderService,
-      RequestFactory,
       GameStateService,
       GameSessionService,
+      RequestFactory,
     ];
     services.forEach((service) => {
       container.bind(service).toSelf().inSingletonScope();
