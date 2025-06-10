@@ -21,11 +21,9 @@ export class AiService implements IAiService {
     private readonly log: LogService,
   ) {
     this.currentProvider = this.providerService.getProvider();
-    this.log.info(Object.values(this.currentProvider).join(' -> '));
+    this.log.info('[AiService] currentProvider ->', this.currentProvider);
     this.systemRole = this.providerService.getSystemRole();
-    this.log.info(
-      `currentProvider ${this.currentProvider?.provider} -> systemRole Ai -> ${this.systemRole?.name}`,
-    );
+    this.log.info('[AiService] systemRole ->', this.systemRole);
     this.openai = this.openaiFactory.create(this.currentProvider);
   }
 
@@ -47,16 +45,10 @@ export class AiService implements IAiService {
       ask,
       currentModel,
       this.systemRole,
-      this.history.getLastHistory(5),
+      this.history.getLastHistory(15),
     );
 
-    this.log.info(
-      'HISTORY MESSAGE --->>',
-      this.history
-        .getLastHistory(5)
-        .map((m) => m.role + '| ' + m.content)
-        .join(' >> '),
-    );
+    console.log('HISTORY MESSAGE --->>', chatCompletionMessage);
 
     const completion = await this.openai.chat.completions.create({
       model: model,

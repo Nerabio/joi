@@ -38,13 +38,13 @@ export class FacadeService {
   }
 
   private request(message: string): Promise<string> {
-    this.log.info(`request user -> ${message}`);
+    this.log.info('[FacadeService] request -> ', message);
     return new Promise(async (resolve, reject) => {
       this.storage.create();
       const responseAi = await this.requestFactory(message, this.provider.getSystemRole());
       this.storage.saveText(responseAi);
       this.history.add(Role.ASSISTANT, responseAi);
-      this.log.info(`response Ai -> ${responseAi}`);
+      this.log.info('[FacadeService] response Ai ->', responseAi);
       resolve(responseAi);
     });
   }
@@ -57,7 +57,7 @@ export class FacadeService {
 
   private getDelayedAnswer(): Promise<string> {
     const delayedAnswer = Object.assign(this.storage.get());
-    this.log.info(delayedAnswer);
+    this.log.info('[FacadeService] getDelayedAnswer ->', delayedAnswer);
     const isComplete = this.storage.isComplete();
     if (!isComplete) {
       return Promise.resolve(getRandomMessage());

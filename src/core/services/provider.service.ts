@@ -7,27 +7,37 @@ import { Provider, SystemRole } from '../../shared/interfaces';
 export class ProviderService {
   private readonly providers: Provider[];
   private readonly systemRole: SystemRole[];
+  private currentRole: SystemRole;
+  private currentProvider: Provider;
+  private systemPromtTemplate: string;
   constructor(
     private readonly configService: ConfigService,
     private readonly log: LogService,
   ) {
     this.providers = this.configService.getCollection<Provider[]>('providers');
     this.systemRole = this.configService.getCollection<SystemRole[]>('roles');
+    this.currentProvider = this.providers.find((p) => p.provider === 'together');
+    this.currentRole = this.systemRole.find((r) => r.name === 'space_traveler');
+    this.systemPromtTemplate = this.currentRole.role;
   }
 
   getProvider(): Provider {
-    return this.providers.find((p) => p.provider === 'openrouter.ai');
+    return this.currentProvider;
   }
 
   getSystemRole(): SystemRole {
-    return this.systemRole.find((r) => r.name === 'space_traveler');
+    return this.currentRole;
+  }
+
+  getSystemPromtTemplate(): string {
+    return this.systemPromtTemplate;
   }
 
   updateSystemRole(newSystemRole: string): void {
     const systemRole = this.getSystemRole();
     if (systemRole) {
       systemRole.role = newSystemRole;
-      this.log.info(newSystemRole);
+      this.log.info('[ProviderService] updateSystemRole ->', newSystemRole);
     }
   }
 }

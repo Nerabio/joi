@@ -47,16 +47,29 @@ export class GameStateService {
 
   private deepMerge(state: GameState, updates: Partial<GameState>): GameState {
     const merge = (target: any, source: any): any => {
-      if (typeof target === 'object' && typeof source === 'object') {
+      if (Array.isArray(target) && Array.isArray(source)) {
+        // Если оба значения - массивы, объединяем их
+        return [...target, ...source];
+      } else if (
+        typeof target === 'object' &&
+        target !== null &&
+        typeof source === 'object' &&
+        source !== null
+      ) {
+        // Если оба значения - объекты (не null), рекурсивно объединяем
+        const result = { ...target };
         for (const key in source) {
-          if (source[key] !== null && typeof source[key] === 'object') {
-            target[key] = merge(target[key] ?? {}, source[key]);
-          } else {
-            target[key] = source[key];
+          if (source.hasOwnProperty(key)) {
+            if (key in target) {
+              result[key] = merge(target[key], source[key]);
+            } else {
+              result[key] = source[key];
+            }
           }
         }
-        return target;
+        return result;
       }
+      // Для всех остальных случаев заменяем целевое значение исходным
       return source;
     };
 
