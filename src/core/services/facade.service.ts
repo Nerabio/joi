@@ -7,6 +7,7 @@ import { MessageStatus, Role } from '../../shared/interfaces';
 import { ApiErrorException } from '../../shared/errors/api-error.exception';
 import { getRandomMessage } from '../../shared/utils/get-rnd-item';
 import { LogService } from './log.service';
+import { ProviderService } from './provider.service';
 
 @injectable()
 export class FacadeService {
@@ -14,7 +15,8 @@ export class FacadeService {
     private readonly ai: AiService,
     private readonly storage: StorageService,
     private readonly history: HistoryService,
-    private readonly log: LogService
+    private readonly provider: ProviderService,
+    private readonly log: LogService,
   ) {}
 
   async getAnswer(question: string): Promise<string> {
@@ -34,20 +36,20 @@ export class FacadeService {
   }
 
   private request(message: string): Promise<string> {
-    this.log.info(`request user -> ${message}`)
+    this.log.info(`request user -> ${message}`);
     return new Promise(async (resolve, reject) => {
       this.storage.create();
-      const responseAi = await this.ai.request(message);
+      const responseAi = await this.provider.requestFactory(message);
       this.storage.saveText(responseAi);
       this.history.add(Role.ASSISTANT, responseAi);
-      this.log.info(`response Ai -> ${responseAi}`)
+      this.log.info(`response Ai -> ${responseAi}`);
       resolve(responseAi);
     });
   }
 
   private getDelayedAnswer(): Promise<string> {
     const delayedAnswer = Object.assign(this.storage.get());
-    this.log.info(delayedAnswer)
+    this.log.info(delayedAnswer);
     const isComplete = this.storage.isComplete();
     if (!isComplete) {
       return Promise.resolve(getRandomMessage());

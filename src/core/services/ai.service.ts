@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import OpenAI from 'openai';
 import { ChatCompletionMessageParam } from 'openai/resources/chat';
-import { MessageHistory, ModelsSetting, Provider, Role, SyslemRole } from '../../shared/interfaces';
+import { MessageHistory, ModelsSetting, Provider, Role, SystemRole } from '../../shared/interfaces';
 import { HistoryService } from './history.service';
 import { OpenAIFactory } from '../factories/openai.factory';
 import { IAiService } from '../../shared/interfaces/iai-service.interface';
@@ -12,7 +12,7 @@ import { LogService } from './log.service';
 export class AiService implements IAiService {
   private readonly openai: OpenAI;
   private readonly currentProvider: Provider;
-  private readonly systemRole: SyslemRole;
+  private readonly systemRole: SystemRole;
 
   constructor(
     private readonly history: HistoryService,
@@ -63,7 +63,7 @@ export class AiService implements IAiService {
   makeMessage(
     ask: string,
     settings: ModelsSetting,
-    systemRole: SyslemRole,
+    systemRole: SystemRole,
     history: MessageHistory[],
   ): ChatCompletionMessageParam[] {
     const messageParam = [
@@ -78,7 +78,6 @@ export class AiService implements IAiService {
       content: ask,
     });
     this.history.add(Role.USER, ask);
-    //console.log(this.history);
     return messageParam;
   }
 }

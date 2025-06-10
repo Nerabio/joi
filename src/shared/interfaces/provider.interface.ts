@@ -15,7 +15,14 @@ export interface ModelsSetting {
   presence_penalty: number;
 }
 
-export interface SyslemRole {
+export interface SystemRole {
   name: string;
   role: string;
+  type: SystemType;
+  state?: any;
+}
+
+export enum SystemType {
+  DIALOG = 'dialog',
+  GAME = 'game',
 }
