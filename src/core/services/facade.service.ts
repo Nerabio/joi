@@ -1,5 +1,4 @@
 import { injectable } from 'inversify';
-import { CONTINUATION_PHRASE, WELCOME_MESSAGE } from '../../shared/constants/constants';
 import { HistoryService } from './history.service';
 import { StorageService } from './storage.service';
 import { ApiErrorException } from '../../shared/errors/api-error.exception';
@@ -9,17 +8,23 @@ import { Role, SystemRole, SystemType } from '../../shared/interfaces';
 import { AiService } from './ai.service';
 import { GameSessionService } from './game-session.service';
 import { ProviderService } from './provider.service';
+import { ConfigService } from './config.service';
 
 @injectable()
 export class FacadeService {
+  private currentRole: SystemRole;
+  private requestTimeoutMs = +this.configService.getKey('requestTimeoutMs');
   constructor(
     private readonly storage: StorageService,
     private readonly history: HistoryService,
     private readonly aiService: AiService,
     private readonly gameService: GameSessionService,
     private readonly provider: ProviderService,
+    private readonly configService: ConfigService,
     private readonly log: LogService,
-  ) {}
+  ) {
+    this.currentRole = this.provider.getSystemRole();
+  }
 
   async getAnswer(question: string): Promise<string> {
     try {
@@ -28,8 +33,8 @@ export class FacadeService {
       }
 
       return question.length > 0
-        ? await Promise.race([this.timeout(), this.request(question)])
-        : WELCOME_MESSAGE;
+        ? await Promise.race([this.timeout(this.requestTimeoutMs), this.request(question)])
+        : this.currentRole.welcomeMessage;
     } catch (error) {
       console.log('Error in getAnswer', error);
       this.log.error(error);
@@ -60,25 +65,25 @@ export class FacadeService {
     this.log.info('[FacadeService] getDelayedAnswer ->', delayedAnswer);
     const isComplete = this.storage.isComplete();
     if (!isComplete) {
-      return Promise.resolve(getRandomMessage());
+      return Promise.resolve(getRandomMessage(this.currentRole.waitMessages));
     }
     this.storage.clear();
     return delayedAnswer.answer;
   }
 
   private isContinuePhrase(input: string): boolean {
-    return this.prepareString(input) === CONTINUATION_PHRASE;
+    return this.prepareString(input) === this.currentRole.continuationPhrase;
   }
 
   private prepareString(message: string): string {
     return message.trim().toLowerCase();
   }
 
-  private timeout(): Promise<string> {
+  private timeout(timeMs: number): Promise<string> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve(getRandomMessage());
-      }, 4100);
+        resolve(getRandomMessage(this.currentRole.waitMessages));
+      }, timeMs);
     });
   }
 }

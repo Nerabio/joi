@@ -1,6 +1,5 @@
 import { injectable } from 'inversify';
 
-import { SystemRole } from '../../shared/interfaces';
 import { AiService } from './ai.service';
 import { GameStateService } from './game-state.service';
 import { ProviderService } from './provider.service';
@@ -31,9 +30,12 @@ export class GameSessionService {
 
   private buildPrompt(input: string, systemRoleTemplate: string): string {
     this.log.info('[GameSessionService] buildPrompt systemRoleTemplate ->>', systemRoleTemplate);
+    Handlebars.registerHelper('raw-json', (context) => {
+      return new Handlebars.SafeString(JSON.stringify(context));
+    });
     const template = Handlebars.compile(systemRoleTemplate);
     const state = this.stateService.getState();
-    return template({ state: JSON.stringify(state), input });
+    return template({ state, input });
   }
 
   private updateAndResponse(aiResponse: string): string {
