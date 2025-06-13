@@ -7,7 +7,7 @@ import { ConfigService } from './core/services';
 require('dotenv').config();
 
 const config = container.get(ConfigService);
-const port = 8080;
+const port = parseInt(config.getKey('port') || '8080', 10);
 
 const app = express();
 app.use(express.json());

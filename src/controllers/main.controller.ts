@@ -7,7 +7,6 @@ import { HistoryService, FacadeService } from '../core/services';
 @injectable()
 export class Main {
   constructor(
-    private readonly history: HistoryService,
     private readonly facade: FacadeService,
   ) {}
 
@@ -15,7 +14,6 @@ export class Main {
   async getAnswer(req: Request, res: Response): Promise<void> {
     const { original_utterance } = req.body.request;
     const message = await this.facade.getAnswer(original_utterance);
-    //console.log("history -> ", this.history.getLastHistory(3));
     res.json({
       response: {
         text: message,

@@ -13,7 +13,11 @@ export class GameSessionService {
     private readonly providerService: ProviderService,
     private readonly stateService: GameStateService,
     private readonly log: LogService,
-  ) {}
+  ) {
+    Handlebars.registerHelper('raw-json', (context) => {
+      return new Handlebars.SafeString(JSON.stringify(context));
+    });
+  }
 
   // async handleInput(userInput: string): Promise<string> {
   //   return Promise.resolve(userInput);
@@ -30,9 +34,6 @@ export class GameSessionService {
 
   private buildPrompt(input: string, systemRoleTemplate: string): string {
     this.log.info('[GameSessionService] buildPrompt systemRoleTemplate ->>', systemRoleTemplate);
-    Handlebars.registerHelper('raw-json', (context) => {
-      return new Handlebars.SafeString(JSON.stringify(context));
-    });
     const template = Handlebars.compile(systemRoleTemplate);
     const state = this.stateService.getState();
     return template({ state, input });

@@ -50,7 +50,7 @@ export class AiService implements IAiService {
       this.history.getLastHistory(15),
     );
 
-    console.log('HISTORY MESSAGE --->>', chatCompletionMessage);
+    this.log.info('[AiService] (request) HISTORY->', chatCompletionMessage);
 
     const completion = await this.openai.chat.completions.create({
       model: model,

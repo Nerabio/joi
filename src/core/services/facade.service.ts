@@ -36,22 +36,19 @@ export class FacadeService {
         ? await Promise.race([this.timeout(this.requestTimeoutMs), this.request(question)])
         : this.currentRole.welcomeMessage;
     } catch (error) {
-      console.log('Error in getAnswer', error);
-      this.log.error(error);
+      this.log.error('[FacadeService] (getAnswer) error -> ', error);
       throw new ApiErrorException('Failed to get answer', 500);
     }
   }
 
-  private request(message: string): Promise<string> {
+  private async request(message: string): Promise<string> {
     this.log.info('[FacadeService] request -> ', message);
-    return new Promise(async (resolve, reject) => {
-      this.storage.create();
-      const responseAi = await this.requestFactory(message, this.provider.getSystemRole());
-      this.storage.saveText(responseAi);
-      this.history.add(Role.ASSISTANT, responseAi);
-      this.log.info('[FacadeService] response Ai ->', responseAi);
-      resolve(responseAi);
-    });
+    this.storage.create();
+    const responseAi = await this.requestFactory(message, this.provider.getSystemRole());
+    this.storage.saveText(responseAi);
+    this.history.add(Role.ASSISTANT, responseAi);
+    this.log.info('[FacadeService] response Ai ->', responseAi);
+    return responseAi;
   }
 
   requestFactory(ask: string, systemRole: SystemRole): Promise<string> {

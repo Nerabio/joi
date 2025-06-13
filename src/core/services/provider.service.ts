@@ -56,7 +56,7 @@ export class ProviderService {
   private setDefaultModelParams(model: ModelsSetting): ModelsSetting {
     model.temperature = model?.temperature ?? +this.configService.getKey('temperature');
     model.max_completion_tokens =
-      model?.max_completion_tokens ?? +this.configService.getKey('temmax_completion_tokenserature');
+      model?.max_completion_tokens ?? +this.configService.getKey('max_completion_tokens');
     model.top_p = model?.top_p ?? +this.configService.getKey('top_p');
     model.frequency_penalty =
       model?.frequency_penalty ?? +this.configService.getKey('frequency_penalty');
