@@ -23,7 +23,7 @@ export class ProviderService {
     this.currentProvider = this.providers.find((p) => p.provider === 'together');
     this.currentModel = this.currentProvider.models[0];
     this.currentModel = this.setDefaultModelParams(this.currentModel);
-    this.currentRole = this.systemRole.find((r) => r.name === 'space_traveler');
+    this.currentRole = this.systemRole.find((r) => r.name === 'behavioral_psychologist');
     this.currentRole = this.setDefaultSystemPhrase(this.currentRole);
 
     this.systemPromtTemplate = this.currentRole.role;
