@@ -16,5 +16,8 @@ COPY . .
 # Порт, который будет использовать приложение
 EXPOSE 8080
 
-# Команда для запуска приложения
-CMD ["npm", "dev"]
+# Устанавливаем зависимости + ts-node
+RUN npm install && npm install -g ts-node
+
+# Запускаем в dev-режиме
+CMD ["npm", "run", "dev"]
