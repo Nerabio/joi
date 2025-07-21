@@ -13,11 +13,16 @@ export class StorageService {
     return this.store;
   }
 
+  pending(): MessageItem | null {
+    this.store = { ...this.store, status: MessageStatus.PENDING };
+    return this.store;
+  }
+
   clear(): void {
     this.store = { ...this.store, status: MessageStatus.CLEAR };
   }
 
-  saveText(message: string): MessageItem | null {
+  save(message: string): MessageItem | null {
     this.store = { ...this.store, answer: message, status: MessageStatus.COMPLETE };
     return this.store;
   }

@@ -43,9 +43,9 @@ export class FacadeService {
 
   private async request(message: string): Promise<string> {
     this.log.info('[FacadeService] request -> ', message);
-    this.storage.create();
+    this.storage.pending();
     const responseAi = await this.requestFactory(message, this.provider.getSystemRole());
-    this.storage.saveText(responseAi);
+    this.storage.save(responseAi);
     this.history.add(Role.ASSISTANT, responseAi);
     this.log.info('[FacadeService] response Ai ->', responseAi);
     return responseAi;
@@ -58,14 +58,14 @@ export class FacadeService {
   }
 
   private getDelayedAnswer(): Promise<string> {
-    const delayedAnswer = Object.assign(this.storage.get());
+    const delayedAnswer = Object.assign({}, this.storage.get());
     this.log.info('[FacadeService] getDelayedAnswer ->', delayedAnswer);
     const isComplete = this.storage.isComplete();
     if (!isComplete) {
       return Promise.resolve(getRandomMessage(this.currentRole.waitMessages));
     }
     this.storage.clear();
-    return delayedAnswer.answer;
+    return Promise.resolve(delayedAnswer.answer);
   }
 
   private isContinuePhrase(input: string): boolean {
